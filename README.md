@@ -39,7 +39,7 @@ cd protego
    POSTGRES_USER=admin
    POSTGRES_PASSWORD=secret
    POSTGRES_DB=pageanalytics
-   DATABASE_URL=postgresql://admin:secret@postgres:5432/page_analytics
+   DATABASE_URL=postgresql://admin:secret@postgres:5432/pageanalytics
    ```
 2. Start the backend services (FastAPI and PostgreSQL):
    ```bash

@@ -64,9 +64,10 @@ cd protego
    - Open Chrome and go to chrome://extensions/.
    - Enable Developer mode (top-right toggle).
    - Click Load unpacked and select protego/extension/dist/.
+   - Reload the extension to clear any errors, if any
 4. Open the side panel:
    - Visit a webpage (e.g., https://www.uhcprovider.com or https://www.aetna.com/cpb/medical/data/900_999/0965.html).
-   - Click the extension icon in the Chrome toolbar and select Open side panel.
+   - Click the extension icon in the Chrome toolbar.
    - View page metrics (links, words, images) and past visit timestamps.
 
 ### 4.Testing

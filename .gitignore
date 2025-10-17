@@ -1,0 +1,51 @@
+# .gitignore for protego/
+
+# Python-related
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+*.log
+
+# Node.js-related
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+package-lock.json  # Optional, include if you prefer to regenerate lockfile
+
+# Docker-related
+*.dockerignore
+docker-compose.override.yml
+
+# Environment variables
+.env
+*.env
+.env.local
+.env.development
+.env.production
+
+# Editor and OS files
+.DS_Store
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Database-related
+*.sql
+*.sqlite3
+postgres_data/  # PostgreSQL data volume
+
+# Build and cache
+build/
+*.cache/
+coverage/
+*.coverage
+
+# Temporary files
+*.tmp
+*.swp
+*.swo

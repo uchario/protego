@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Page Analytics Tracker",
+  "version": "1.0.0",
+  "description": "Track page visits and view analytics in a side panel",
+  "permissions": ["sidePanel", "tabs", "storage", "scripting", "activeTab"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_title": "Open Side Panel"
+  }
+}

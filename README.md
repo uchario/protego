@@ -49,7 +49,7 @@ cd protego
 
 ### 3. Set Up the Chrome Extension:
 
-1.  install dependencies
+1.  Install dependencies
     ```bash
     cd ../extension
     npm install
@@ -69,8 +69,9 @@ cd protego
    - Visit a webpage (e.g., https://www.uhcprovider.com or https://www.aetna.com/cpb/medical/data/900_999/0965.html).
    - Click the extension icon in the Chrome toolbar.
    - View page metrics (links, words, images) and past visit timestamps.
+   - Refresh the page, close the side panel, and re-click the extension icon in the Chrome toolbar
 
-### 4.Testing
+### 4. Testing
 
 - Test on:
 

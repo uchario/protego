@@ -1,19 +1,18 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from typing import List
-from datetime import datetime
-from pydantic import BaseModel
-
 from .database import engine, get_db, Base
-from .models import PageVisit
+from .exceptions import DatabaseError, NotFoundError
+from .services import PageVisitService
+from .schemas import PageVisitCreate, PageVisitResponse
 
 # Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# CORS configuration for Chrome Extension
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,51 +21,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class PageVisitCreate(BaseModel):
-    url: str
-    link_count: int
-    word_count: int
-    image_count: int
+# Centralized error handlers
+@app.exception_handler(DatabaseError)
+async def database_error_handler(request, exc: DatabaseError):
+    return JSONResponse(
+    status_code=500,
+    content={"detail": f"Database error: {str(exc)}"}
+    )
+@app.exception_handler(NotFoundError)
+async def not_found_error_handler(request, exc: NotFoundError):
+    return JSONResponse(
+    status_code=404,
+    content={"detail": f"Not found: {str(exc)}"}
+    )
 
-class PageVisitResponse(BaseModel):
-    id: int
-    url: str
-    datetime_visited: datetime
-    link_count: int
-    word_count: int
-    image_count: int
-
-    class Config:
-        from_attributes = True
-
-@app.post("/store")
+@app.post("/store", response_model=PageVisitResponse)
 def store_visit(visit: PageVisitCreate, db: Session = Depends(get_db)):
-    db_visit = PageVisit(**visit.dict())
-    db.add(db_visit)
-    db.commit()
-    db.refresh(db_visit)
-    return db_visit
+    try:
+        return PageVisitService.create_visit(db, visit)
+    except DatabaseError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/metrics")
 def get_metrics(url: str, db: Session = Depends(get_db)):
-    visit = db.query(PageVisit).filter(PageVisit.url == url).order_by(PageVisit.datetime_visited.desc()).first()
-    if visit:
-        return {
-            "url": visit.url,
-            "link_count": visit.link_count,
-            "word_count": visit.word_count,
-            "image_count": visit.image_count
-        }
-    return {
-        "url": url,
-        "link_count": 0,
-        "word_count": 0,
-        "image_count": 0
-    }
+    try:
+        return PageVisitService.get_latest_metrics(db, url)
+    except DatabaseError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/history")
 def get_history(url: str, db: Session = Depends(get_db)):
-    visits = db.query(PageVisit).filter(PageVisit.url == url).order_by(PageVisit.datetime_visited.desc()).all()
-    if len(visits) > 1:
-        return [v.datetime_visited.isoformat() for v in visits[:]]
-    return []
+    try:
+        return PageVisitService.get_visit_history(db, url)
+    except DatabaseError as e:
+        raise HTTPException(status_code=500, detail=str(e))
